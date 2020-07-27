@@ -130,9 +130,10 @@ func transformField(transformation *types.Transformation, result *types.AnalyzeR
 		result, err := methods.FPEValue(text, *result.Location, transformation.FPEValue.Key, transformation.FPEValue.Tweak, transformation.FPEValue.Decrypt)
 		return result, err
 	}
-        if transformation.ShiftDateValue != nil {
-           result, err := methods.ShiftDateValue(text,*result.Location,transformation.ShiftDateValue.DaysSinceMomentZero)
-           return result, err
-        }
+
+	if transformation.ShiftDateValue != nil {
+		result, err := methods.ShiftDateValue(text,*result.Location,transformation.ShiftDateValue.DaysSinceMomentZero)
+		return result, err
+	}
 	return "", fmt.Errorf("Transformation not found")
 }
