@@ -107,11 +107,64 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:70478f2f814de37933b4555612b53bb53c7801e7ab4b5687e079d0aa54c7262f"
+  name = "github.com/Microsoft/presidio"
+  packages = [
+    "functional-tests/common",
+    "pkg/cache",
+    "pkg/cache/mock",
+    "pkg/cache/redis",
+    "pkg/logger",
+    "pkg/platform",
+    "pkg/platform/kube",
+    "pkg/platform/local",
+    "pkg/presidio",
+    "pkg/presidio/services",
+    "pkg/presidio/templates",
+    "pkg/queue",
+    "pkg/rpc",
+    "pkg/server",
+    "pkg/storage",
+    "pkg/stream",
+    "pkg/stream/eventhubs",
+    "pkg/stream/kafka",
+    "pkg/stream/mock",
+    "presctl/cmd",
+    "presctl/cmd/entities",
+    "presidio-anonymizer-image/cmd/presidio-anonymizer-image/anonymizer",
+    "presidio-anonymizer/cmd/presidio-anonymizer/anonymizer",
+    "presidio-anonymizer/cmd/presidio-anonymizer/anonymizer/transformations",
+    "presidio-api/cmd/presidio-api/api",
+    "presidio-api/cmd/presidio-api/api/analyze",
+    "presidio-api/cmd/presidio-api/api/anonymize",
+    "presidio-api/cmd/presidio-api/api/anonymize-image",
+    "presidio-api/cmd/presidio-api/api/mocks",
+    "presidio-api/cmd/presidio-api/api/recognizers",
+    "presidio-api/cmd/presidio-api/api/scanner-cron-job",
+    "presidio-api/cmd/presidio-api/api/stream-job",
+    "presidio-api/cmd/presidio-api/api/templates",
+    "presidio-api/cmd/presidio-api/docs",
+    "presidio-collector/cmd/presidio-collector/processor",
+    "presidio-collector/cmd/presidio-collector/scanner",
+    "presidio-collector/cmd/presidio-collector/streams",
+    "presidio-datasink/cmd/presidio-datasink/cloudstorage",
+    "presidio-datasink/cmd/presidio-datasink/database",
+    "presidio-datasink/cmd/presidio-datasink/datasink",
+    "presidio-datasink/cmd/presidio-datasink/stream",
+    "presidio-ocr/cmd/presidio-ocr/ocr",
+  ]
+  pruneopts = "UT"
+  revision = "14e59777c3ad7ae5951c34cb898186829e877e06"
+  source = "github.com/road2hana/presidio"
+
+[[projects]]
+  branch = "master"
   digest = "1:c79ff0c1cb49b28ad509306045dd8d5e46072354c0b4dbaff75434f3e630ce8d"
   name = "github.com/Microsoft/presidio-genproto"
   packages = ["golang"]
   pruneopts = "UT"
   revision = "1734e2635c253f79e4c44398315d92fe9d084601"
+  source = "github.com/road2hana/presidio-genproto"
 
 [[projects]]
   digest = "1:2ec153af6a806c3d63d4299f2549bcb29d75d9703097341be309a46db3481488"
@@ -479,6 +532,14 @@
   version = "v0.3.7"
 
 [[projects]]
+  digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
+  name = "github.com/inconshreveable/mousetrap"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
+  version = "v1.0"
+
+[[projects]]
   digest = "1:bb81097a5b62634f3e9fec1014657855610c82d19b9a40c17612e32651e35dca"
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
@@ -552,6 +613,14 @@
   pruneopts = "UT"
   revision = "c7c4067b79cc51e6dfdcef5c702e74b1e0fa7c75"
   version = "v1.10.0"
+
+[[projects]]
+  digest = "1:5d231480e1c64a726869bc4142d270184c419749d34f167646baa21008eb0a79"
+  name = "github.com/mitchellh/go-homedir"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "af06845cf3004701891bf4fdb884bfe4920b3727"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:53bc4cd4914cd7cd52139990d5170d6dc99067ae31c56530621b18b35fc30318"
@@ -682,6 +751,14 @@
   pruneopts = "UT"
   revision = "8c9545af88b134710ab1cd196795e7f2388358d7"
   version = "v1.3.0"
+
+[[projects]]
+  digest = "1:f6adcf4df6c030a53a14a8fdbb3fade7cac3d014ff78a4e0de500b4c0cf5154f"
+  name = "github.com/spf13/cobra"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a684a6d7f5e37385d954dd3b5a14fc6912c6ab9d"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:1b753ec16506f5864d26a28b43703c58831255059644351bbcb019b843950900"
@@ -1267,6 +1344,48 @@
     "github.com/Azure/azure-storage-blob-go/azblob",
     "github.com/Azure/go-autorest/autorest/azure",
     "github.com/Microsoft/presidio-genproto/golang",
+    "github.com/Microsoft/presidio/functional-tests/common",
+    "github.com/Microsoft/presidio/pkg/cache",
+    "github.com/Microsoft/presidio/pkg/cache/mock",
+    "github.com/Microsoft/presidio/pkg/cache/redis",
+    "github.com/Microsoft/presidio/pkg/logger",
+    "github.com/Microsoft/presidio/pkg/platform",
+    "github.com/Microsoft/presidio/pkg/platform/kube",
+    "github.com/Microsoft/presidio/pkg/platform/local",
+    "github.com/Microsoft/presidio/pkg/presidio",
+    "github.com/Microsoft/presidio/pkg/presidio/services",
+    "github.com/Microsoft/presidio/pkg/presidio/templates",
+    "github.com/Microsoft/presidio/pkg/queue",
+    "github.com/Microsoft/presidio/pkg/rpc",
+    "github.com/Microsoft/presidio/pkg/server",
+    "github.com/Microsoft/presidio/pkg/storage",
+    "github.com/Microsoft/presidio/pkg/stream",
+    "github.com/Microsoft/presidio/pkg/stream/eventhubs",
+    "github.com/Microsoft/presidio/pkg/stream/kafka",
+    "github.com/Microsoft/presidio/pkg/stream/mock",
+    "github.com/Microsoft/presidio/presctl/cmd",
+    "github.com/Microsoft/presidio/presctl/cmd/entities",
+    "github.com/Microsoft/presidio/presidio-anonymizer-image/cmd/presidio-anonymizer-image/anonymizer",
+    "github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer",
+    "github.com/Microsoft/presidio/presidio-anonymizer/cmd/presidio-anonymizer/anonymizer/transformations",
+    "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api",
+    "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/analyze",
+    "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/anonymize",
+    "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/anonymize-image",
+    "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/mocks",
+    "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/recognizers",
+    "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/scanner-cron-job",
+    "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/stream-job",
+    "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/api/templates",
+    "github.com/Microsoft/presidio/presidio-api/cmd/presidio-api/docs",
+    "github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/processor",
+    "github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/scanner",
+    "github.com/Microsoft/presidio/presidio-collector/cmd/presidio-collector/streams",
+    "github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/cloudstorage",
+    "github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/database",
+    "github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/datasink",
+    "github.com/Microsoft/presidio/presidio-datasink/cmd/presidio-datasink/stream",
+    "github.com/Microsoft/presidio/presidio-ocr/cmd/presidio-ocr/ocr",
     "github.com/Shopify/sarama",
     "github.com/bsm/sarama-cluster",
     "github.com/capitalone/fpe/ff1",
@@ -1282,11 +1401,13 @@
     "github.com/korovkin/limiter",
     "github.com/lib/pq",
     "github.com/mattn/go-sqlite3",
+    "github.com/mitchellh/go-homedir",
     "github.com/otiai10/gosseract",
     "github.com/presid-io/stow",
     "github.com/presid-io/stow/azure",
     "github.com/presid-io/stow/s3",
     "github.com/satori/go.uuid",
+    "github.com/spf13/cobra",
     "github.com/spf13/pflag",
     "github.com/spf13/viper",
     "github.com/streadway/amqp",
@@ -1310,4 +1431,3 @@
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
-  

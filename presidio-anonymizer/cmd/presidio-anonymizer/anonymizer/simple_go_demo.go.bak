@@ -1,0 +1,23 @@
+package main
+
+import (
+	"fmt"
+	"time"
+	"regexp"
+)
+
+func main() {
+	t, _ := time.Parse("2006.01.02", "2006.01.02")
+	fmt.Println(t)
+	var m  map[string]string
+	m = make(map[string]string)
+	m["(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])"] = "2006-01-02"
+	m["(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\\d\\d"] = "01-02-2006"
+
+	sample_date := "2020-07-22"
+	for dateReg, dateLayout := range m {
+		var dateValidtor = regexp.MustCompile(dateReg)
+		fmt.Println(dateValidtor.MatchString(sample_date))
+		fmt.Println("dateReg",dateReg, "dateLayout",dateLayout)
+	} 
+}

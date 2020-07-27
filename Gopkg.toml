@@ -50,10 +50,10 @@
 [[constraint]]
   branch = "master"
   name = "github.com/korovkin/limiter"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/Microsoft/presidio-genproto"
+  
+#[[constraint]]
+#  branch = "master"
+#  name  = "github.com/Microsoft/presidio-genproto"
 
 [[constraint]]
   branch = "master"
