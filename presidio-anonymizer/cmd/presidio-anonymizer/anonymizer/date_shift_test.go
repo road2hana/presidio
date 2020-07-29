@@ -20,7 +20,7 @@ var testDatePlans = []struct {
 	{
 		desc:     "Shifting date time fields",
 		text:     "My name is David and I live in Miami. I traveled on 12/03/2018 to the beach, and returned on April 20. I need to go to school on 13th of June",
-		expected: "My name is <PERSON> and I live in <LOCATION>. I traveled on 11/03/2018 to the beach, and returned on March 20. I need to go to school on 13th of June",
+		expected: "My name is <PERSON> and I live in <LOCATION>. I traveled on 11/03/2018 to the beach, and returned on March 21. I need to go to school on 13th of June",
 		analyzeResults: []*types.AnalyzeResult{{
 			Location: &types.Location{
 				Start: 52,
@@ -38,6 +38,26 @@ var testDatePlans = []struct {
                         Score: 0.85,
 			Field: &types.FieldTypes{
 				Name: types.FieldTypesEnum_PERSON.String(),
+			},
+                },
+                {
+                        Location: &types.Location{
+				Start: 93,
+				End:   101,
+			},
+                        Score: 0.85,
+			Field: &types.FieldTypes{
+				Name: types.FieldTypesEnum_DATE_TIME.String(),
+			},
+                },
+                {
+                        Location: &types.Location{
+				Start: 129,
+				End:   141,
+			},
+                        Score: 0.85,
+			Field: &types.FieldTypes{
+				Name: types.FieldTypesEnum_DATE_TIME.String(),
 			},
                 },
                 {
@@ -67,7 +87,7 @@ var testDatePlans = []struct {
 		        }},                
 			Transformation: &types.Transformation{
 				ShiftDateValue: &types.ShiftDateValue{
-					DaysSinceMomentZero: 60,
+					DaysSinceMomentZero: -30,
 				},
 			},
 		},

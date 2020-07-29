@@ -5,9 +5,14 @@ FROM ${REGISTRY}/presidio-golang-deps:${PRESIDIO_DEPS_LABEL}
 
 
 COPY Gopkg.lock Gopkg.toml $GOPATH/src/github.com/Microsoft/presidio/
+COPY vendor $GOPATH/src/github.com/Microsoft/presidio/vendor
+
 WORKDIR $GOPATH/src/github.com/Microsoft/presidio
-RUN dep ensure -vendor-only
-RUN cp $GOPATH/src/github.com/Microsoft/presidio/presidio-genproto-golang/template.pb.go $GOPATH/src/github.com/Microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang/.
+
+#RUN dep ensure -vendor-only
+
 
 ADD . $GOPATH/src/github.com/Microsoft/presidio
+COPY ./presidio-genproto/golang/template.pb.go $GOPATH/src/github.com/Microsoft/presidio/vendor/github.com/Microsoft/presidio-genproto/golang/.
+
 RUN make go-test
