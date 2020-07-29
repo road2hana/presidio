@@ -6,6 +6,7 @@ ARG NAME=presidio-anonymizer
 ARG PRESIDIOPATH=${GOPATH}/src/github.com/Microsoft/presidio
 ARG VERSION=latest
 
+COPY ${NAME}/cmd/${NAME} ${PRESIDIOPATH}/${NAME}/cmd/${NAME}
 WORKDIR ${PRESIDIOPATH}/${NAME}/cmd/${NAME}
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 && go build -ldflags '-X github.com/Microsoft/presidio/pkg/version.Version=${VERSION}' -o /usr/bin/${NAME}
 
