@@ -3,85 +3,17 @@ package main
 import (
 	"fmt"
 	"time"
-	"regexp"
-	"strings"
 )
 
-var datePatterns map[string]string
-var sepSymbols = [4]string {"-"," ","/","."}
-
-func init(){
-	datePatterns = make(map[string]string)
-	datePatterns["(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])"] = "2006-01-02"
-	datePatterns["(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\\d\\d"] = "01-02-2006"
-
-}
-
-func shiftDate(dateValue string, daysSinceMomentZero int)(string, error){
-	// get a date layout matches the date value
-	dateLayout, err := parseDateLayout(dateValue)
-	// parset date
-	dateObj, err := time.Parse(dateLayout,dateValue)
-	// shift date with daysSinceMomentZero
-	shiftedDateObj := dateObj.Add(time.Hour * 24 * time.Duration(daysSinceMomentZero))
-	shiftedDate := shiftedDateObj.Format(dateLayout)
-	return shiftedDate,err
-}
-
-func parseDateLayout( dateValue string) (string, error){
-	// check date pattern that matches the dateValue
-	var datePatternMatched string
-	for dateReg, dateLayout := range datePatterns {
-		var dateValidtor = regexp.MustCompile(dateReg)
-		var matched = dateValidtor.MatchString(dateValue)
-
-		fmt.Println("dateReg",dateReg, "dateLayout",dateLayout)
-		if matched {
-			datePatternMatched = dateReg
-			break
-		}
-	}
-	if datePatternMatched == "" {
-		return "",fmt.Errorf("No date pattern matched the date value:"+dateValue)
-	}
-	// get default dateLayout
-	dateLayout := datePatterns[datePatternMatched]
-	// get date seperator in dateValue
-	defaultSep, newSep := parseDateSeprator(dateLayout,dateValue)
-	// convert the default date layout to a new one matching the style of dateValue
-	newDateLayout := strings.Replace(dateLayout,defaultSep, newSep,-1)
-	return newDateLayout,nil
-}
-
-func parseDateSeprator(dateLayout string, dateValue string)(string,string){
-	var defaultSep,newSep = "-","-"
-	for _, sepSymbol := range sepSymbols {
-		// get defaultSep
-		if strings.Contains(dateLayout,sepSymbol) {
-			defaultSep = sepSymbol
-			fmt.Println("defaultSet", defaultSep)
-		}
-		if strings.Contains(dateValue,sepSymbol) {
-			newSep = sepSymbol
-			fmt.Println("newSep",newSep)
-		}
-	}
-	return defaultSep, newSep
-}
 
 
 func main() {
-	dateLayout := "Jan 02"
-	t, err := time.Parse(dateLayout, "March 28")
-	if err!=nil {
+	dateLayout := "02th-of-January"
+	t, err := time.Parse(dateLayout, "30th-of-July")
+	if err==nil {
 		fmt.Println(t.Format(dateLayout))		
 	}else{
 		fmt.Println(err)
 	}
-
-
-
-	
-
 
 }

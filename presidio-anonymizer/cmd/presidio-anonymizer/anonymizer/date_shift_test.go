@@ -20,7 +20,7 @@ var testDatePlans = []struct {
 	{
 		desc:     "Shifting date time fields",
 		text:     "My name is David and I live in Miami. I traveled on 12/03/2018 to the beach, and returned on April 20. I need to go to school on 13th of June",
-		expected: "My name is <PERSON> and I live in <LOCATION>. I traveled on 11/03/2018 to the beach, and returned on March 21. I need to go to school on 13th of June",
+		expected: "My name is <PERSON> and I live in <LOCATION>. I traveled on 11/03/2018 to the beach, and returned on March 21. I need to go to school on 14th of May",
 		analyzeResults: []*types.AnalyzeResult{{
 			Location: &types.Location{
 				Start: 52,

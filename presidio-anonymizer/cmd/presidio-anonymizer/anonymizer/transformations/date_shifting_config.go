@@ -40,10 +40,13 @@ func ShiftDateValue(text string, location types.Location, daysSinceMomentZero in
 
 func init(){
 	datePatterns = make(map[string]string)
-	datePatterns["(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])"] = "2006-01-02"
-	datePatterns["(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\\d\\d"] = "01-02-2006"
-	datePatterns["(?:(((Jan(uary)?|Ma(r(ch)?|y)|Jul(y)?|Aug(ust)?|Oct(ober)?|Dec(ember)?)[- /.]31)|((Jan(uary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sept|Nov|Dec)(ember)?)[- /.](0?[1-9]|([12]\\d)|30))|(Feb(ruary)?[- /.](0?[1-9]|1\\d|2[0-8]|(29([- /.]((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))))[- /.]((1[6-9]|[2-9]\\d)\\d{2}))"] = "Jan-02-2006"
-	datePatterns["((Jan(uary)?|Ma(r(ch)?|y)|Jul(y)?|Aug(ust)?|Oct(ober)?|Dec(ember)?)[- /.]31)|((Jan(uary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sept|Nov|Dec)(ember))[- /.](0[1-9]|([12]\\d)|30))|(Feb(ruary)?[- /.](0[1-9]|1\\d|2[0-8]|(29)))"] = "January-02"
+	datePatterns["(19|20)\\d\\d([-/.]| +)(0[1-9]|1[012])([-/.]| +)(0[1-9]|[12][0-9]|3[01])"] = "2006-01-02"
+	datePatterns["(0[1-9]|1[012])([-/.]| +)(0[1-9]|[12][0-9]|3[01])([-/.]| +)(19|20)\\d\\d"] = "01-02-2006"
+	datePatterns["(?:(((Jan(uary)?|Ma(r(ch)?|y)|Jul(y)?|Aug(ust)?|Oct(ober)?|Dec(ember)?)([-/.]| +)31)|((Jan(uary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sept|Nov|Dec)(ember)?)([-/.]| +)(0?[1-9]|([12]\\d)|30))|(Feb(ruary)?([-/.]| +)(0?[1-9]|1\\d|2[0-8]|(29(([-/.]| +)((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))))([-/.]| +)((1[6-9]|[2-9]\\d)\\d{2}))"] = "Jan-02-2006"
+	datePatterns["((January|March|May|July|August|October|December)([-/.]| +)31)|((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))([-/.]| +)(0[1-9]|([12]\\d)|30)|(February([-/.]| +)(0[1-9]|1\\d|2[0-8]|(29)))"] = "January-02"
+	datePatterns["((Jan|Mar|May|Jul|Aug|Oct|Dec)([-/.]| +)31)|((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)([-/.]| +)(0[1-9]|([12]\\d)|30)|(Feb([-/.]| +)(0[1-9]|1\\d|2[0-8]|(29)))"] = "Jan-06"
+	datePatterns["(31th +of +(January|March|May|July|August|October|December))|(0[1-9]|([12]\\d)|30)th +of +((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0[1-9]|1\\d|2[0-8]|(29))th +of + February)"] = "02th of January"
+	datePatterns["(31th +of +(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0[1-9]|([12]\\d)|30)th +of +((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0[1-9]|1\\d|2[0-8]|(29))th +of +Feb)"] = "02th of Jan"
 
 }
 
