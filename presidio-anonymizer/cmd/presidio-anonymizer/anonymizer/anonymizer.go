@@ -56,15 +56,23 @@ func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.
 	//Sort results by start location to verify order
 	sort.Sort(sortedResults(results))
 
+	for i := 0; i < len(results); i++ {
+		fmt.Println("result before remove dup:", results[i])
+	}
 	//Remove duplicates based on score
 	if len(results) > 1 {
 		results = removeDuplicatesBaseOnScore(results)
+		fmt.Println("length of result after remove dep:", len(results))
+		for i := 0; i< len(results); i++ {
+			fmt.Println("Result after remove dep:", results[i])
+		}
 	}
 
 	//Apply new values
 	for i := len(results) - 1; i >= 0; i-- {
 
 		result := results[i]
+		fmt.Println("result:", result)
 		transformed, transformedText, err := anonymizeSingleResult(result, template.FieldTypeTransformations, text)
 		if err != nil {
 			return "", err
@@ -93,18 +101,34 @@ func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.
 
 func removeDuplicatesBaseOnScore(results []*types.AnalyzeResult) []*types.AnalyzeResult {
 
-	j := 0
+	current_index := 0
+	var ret_results[]*types.AnalyzeResult
+
+	// initialized dynamic return results
+	if len(results) > 0 {
+		ret_results = append(ret_results, results[0])
+	}
 	for i := 1; i < len(results); i++ {
-		if results[j].Location.Start == results[i].Location.Start && results[j].Location.End == results[i].Location.End {
+		current_index = len(ret_results) - 1
+		if ret_results[current_index].Location.Start == results[i].Location.Start && ret_results[current_index].Location.End < results[i].Location.End {
+			ret_results[current_index] = results[i]
 			continue
 		}
-		j++
-
-		// Swap
-		results[i], results[j] = results[j], results[i]
+		// deal with overlaped locations, our strategy is to combinb them together
+		if ret_results[current_index].Location.End > results[i].Location.Start && ret_results[current_index].Location.End < results[i].Location.End {
+			//extend the Location
+			ret_results[current_index].Location.End = results[i].Location.End
+			continue
+		}
+		// deal with duplicate recognizer by using the recognizer with higher score
+		if ret_results[current_index].Location.Start == results[i].Location.Start && ret_results[current_index].Location.End ==  results[i].Location.End {
+			// do nothing
+			continue
+		} 
+		ret_results = append(ret_results, results[i])
 	}
-
-	return results[:j+1]
+	//	stop_index := len(results) - j
+	return ret_results
 }
 
 func transformField(transformation *types.Transformation, result *types.AnalyzeResult, text string) (string, error) {
@@ -133,6 +157,11 @@ func transformField(transformation *types.Transformation, result *types.AnalyzeR
 
 	if transformation.ShiftDateValue != nil {
 		result, err := methods.ShiftDateValue(text,*result.Location,transformation.ShiftDateValue.DaysSinceMomentZero)
+		return result, err
+	}
+
+	if transformation.ShiftDateToDaysSinceMomentZeroValue != nil {
+		result, err := methods.ShiftDateToDaysSinceMomentZeroValue(text, *result.Location, transformation.ShiftDateToDaysSinceMomentZeroValue.DateOfMomentZero, transformation.ShiftDateToDaysSinceMomentZeroValue.DateLayout)
 		return result, err
 	}
 	return "", fmt.Errorf("Transformation not found")

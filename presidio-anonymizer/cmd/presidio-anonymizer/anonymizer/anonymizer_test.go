@@ -367,7 +367,6 @@ var testPlans = []struct {
 func TestPlan(t *testing.T) {
 	for _, plan := range testPlans {
 		t.Logf("Testing %s", plan.desc)
-
 		anonymizerTemplate := types.AnonymizeTemplate{
 			FieldTypeTransformations: plan.fieldTypeTransformation,
 			DefaultTransformation:    plan.defaultTransformation,
@@ -375,6 +374,7 @@ func TestPlan(t *testing.T) {
 		output, err := AnonymizeText(plan.text, plan.analyzeResults, &anonymizerTemplate)
 		assert.NoError(t, err)
 		assert.Equal(t, plan.expected, output)
+		
 	}
 }
 
