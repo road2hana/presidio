@@ -37,6 +37,9 @@ func TestAnonymizeWithTemplateId(t *testing.T) {
 		AnalyzeTemplateId:   "test",
 		AnalyzeTemplate:     &types.AnalyzeTemplate{},
 		AnonymizeTemplateId: "test",
+		AnonymizeTextContext: &types.AnonymizeTextContext{
+			CreateDate: "18/10/2018",
+		},
 	}
 
 	results, err := Anonymize(context.Background(), api, anonymizeAPIRequest, project)

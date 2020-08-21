@@ -35,7 +35,8 @@ func Anonymize(ctx context.Context, api *store.API, anonymizeAPIRequest *types.A
 		return nil, fmt.Errorf("No analyze results")
 	}
 
-	anonymizeRes, err := api.Services.AnonymizeItem(ctx, analyzeRes.AnalyzeResults, anonymizeAPIRequest.Text, anonymizeAPIRequest.AnonymizeTemplate)
+	anonymizeRes, err := api.Services.AnonymizeItem(ctx, analyzeRes.AnalyzeResults, anonymizeAPIRequest.Text, anonymizeAPIRequest.AnonymizeTemplate, anonymizeAPIRequest.AnonymizeTextContext)
+
 	if err != nil {
 		return nil, err
 	} else if anonymizeRes == nil {

@@ -37,7 +37,7 @@ func ShiftDateValue(text string, location types.Location, daysSinceMomentZero in
 }
 
 //ShiftDateToDaysSinceMomentZeroValue
-func ShiftDateToDaysSinceMomentZeroValue(text string, location types.Location, dateOfMomentZero string, dateLayout string) (string, error) {
+func ShiftDateToDaysSinceMomentZeroValue(text string, location types.Location, dateOfMomentZero string, dateLayout string, anonymizeTextContext *types.AnonymizeTextContext) (string, error) {
 	if location.Length == 0 {
 		location.Length = location.End - location.Start
 	}
@@ -48,7 +48,7 @@ func ShiftDateToDaysSinceMomentZeroValue(text string, location types.Location, d
 	// get Date value string
 	dateValue := text[location.Start:pos]
 
-	shiftedDateValue, err := shiftDateToDays(dateValue,dateOfMomentZero, dateLayout)
+	shiftedDateValue, err := shiftDateToDays(dateValue,dateOfMomentZero, dateLayout, anonymizeTextContext)
 	var textWithDateShifted string
 	replacedDateValue := "<DaysSM>" + strconv.FormatInt(shiftedDateValue,10) + "</DaysSM>"
 	if err == nil {
@@ -96,12 +96,24 @@ func shiftDate(dateValue string, daysSinceMomentZero int32)(string, error){
 	return shiftedDate,err
 }
 
-func shiftDateToDays(dateValue string, dateOfMomentZero string, momentZeroDateLayout string)(int64 , error){
+func shiftDateToDays(dateValue string, dateOfMomentZero string, momentZeroDateLayout string, anonymizeTextContext *types.AnonymizeTextContext)(int64 , error){
 	// get a dae layout matches the date value
 	dateLayout, err := parseDateLayout(dateValue)
-	fmt.Println("date layout:", dateLayout)
+
 	// parset date
 	dateObj, err := time.Parse(dateLayout, dateValue)
+	//	fmt.Println(dateObj, dateLayout)
+	// deal with date in free text without specifing Year, for example, 11/11. The solution is leveraging the AnonymizeTextContext information
+	if !dateObj.IsZero() && dateObj.Year() == 0 {
+		fmt.Println("Missing Year!")
+		//		fmt.Println("text createDate:", anonymizeTextContext)
+		if anonymizeTextContext != nil && anonymizeTextContext.CreateDate != "" {
+			textCreateDate_layout, _ := parseDateLayout(anonymizeTextContext.CreateDate)
+			textCreateDate, _ := time.Parse(textCreateDate_layout, anonymizeTextContext.CreateDate)
+			dateObj = dateObj.AddDate(textCreateDate.Year(),0,0)
+			fmt.Println("textCreateDate:",textCreateDate)
+		}
+	}
 	fmt.Println("dateObj:", dateObj)
 	// parset moment zero
 	momentZero, err := time.Parse(momentZeroDateLayout, dateOfMomentZero)
@@ -144,7 +156,7 @@ func parseDateSeprator(dateLayout string, dateValue string)(string,string){
 		// get defaultSep
 		if strings.Contains(dateLayout,sepSymbol) {
 			defaultSep = sepSymbol
-			fmt.Println("defaultSet", defaultSep)
+			fmt.Println("defaultSep", defaultSep)
 		}
 		if strings.Contains(dateValue,sepSymbol) {
 			newSep = sepSymbol

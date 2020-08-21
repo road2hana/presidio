@@ -265,7 +265,10 @@ func (services *Services) AnalyzeItem(ctx context.Context, text string, template
 
 //AnonymizeItem - anonymize text
 func (services *Services) AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult,
-	text string, anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error) {
+	text string, anonymizeTemplate *types.AnonymizeTemplate, anonymizeTextContext *types.AnonymizeTextContext) (*types.AnonymizeResponse, error) {
+	if anonymizeTextContext != nil {
+		fmt.Println("AnonymizeTextContext:",anonymizeTextContext)		
+	}
 
 	if anonymizeTemplate != nil {
 
@@ -273,6 +276,7 @@ func (services *Services) AnonymizeItem(ctx context.Context, analyzeResults []*t
 			Template:       anonymizeTemplate,
 			Text:           text,
 			AnalyzeResults: analyzeResults,
+			AnonymizeTextContext: anonymizeTextContext,
 		}
 		return services.AnonymizeService.Apply(ctx, anonymizeRequest)
 	}

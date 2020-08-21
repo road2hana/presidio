@@ -24,7 +24,7 @@ func ReceiveEventsFromStream(st stream.Stream, services presidio.ServicesAPI, st
 			return err
 		}
 
-		anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResponse.AnalyzeResults, text, streamRequest.AnonymizeTemplate)
+		anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResponse.AnalyzeResults, text, streamRequest.AnonymizeTemplate, nil)
 
 		if err != nil {
 			err = fmt.Errorf("error anonymizing item: %s/%s, error: %q", partition, sequence, err.Error())
@@ -79,7 +79,7 @@ func ScanStorage(ctx context.Context, scan scanner.Scanner, cache cache.Cache, s
 			log.Debug("analyzed %d results", len(analyzerResult.AnalyzeResults))
 
 			if len(analyzerResult.AnalyzeResults) > 0 {
-				anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResult.AnalyzeResults, content, scanRequest.AnonymizeTemplate)
+				anonymizerResult, err := services.AnonymizeItem(ctx, analyzerResult.AnalyzeResults, content, scanRequest.AnonymizeTemplate,nil)
 				if err != nil {
 					return err
 				}

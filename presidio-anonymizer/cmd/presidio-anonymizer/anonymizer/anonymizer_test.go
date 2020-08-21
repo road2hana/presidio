@@ -371,7 +371,10 @@ func TestPlan(t *testing.T) {
 			FieldTypeTransformations: plan.fieldTypeTransformation,
 			DefaultTransformation:    plan.defaultTransformation,
 		}
-		output, err := AnonymizeText(plan.text, plan.analyzeResults, &anonymizerTemplate)
+		anonymizeTextContext := types.AnonymizeTextContext{
+			CreateDate: "18/10/2018",
+		}
+		output, err := AnonymizeText(plan.text, plan.analyzeResults, &anonymizerTemplate, &anonymizeTextContext)
 		assert.NoError(t, err)
 		assert.Equal(t, plan.expected, output)
 		
@@ -413,7 +416,10 @@ PR appropriately (e.g., label, comment). Simply follow the instructions provided
 This project has adopted the Microsoft Open Source Code of Conduct. For more information see the Code of Conduct FAQ or contact 
 opencode@microsoft.com with any additional questions or comments.`
 
-	output, err := AnonymizeText(text, analyzeResults, &anonymizerTemplate)
+	anonymizeTextContext := types.AnonymizeTextContext{
+		CreateDate: "18/10/2018",
+	}
+	output, err := AnonymizeText(text, analyzeResults, &anonymizerTemplate, &anonymizeTextContext)
 	assert.NoError(t, err)
 
 	expected := `Here are a few examples of entities we currently support:

@@ -21,7 +21,7 @@ type ServicesAPI interface {
 	SetupCache() cache.Cache
 	AnalyzeItem(ctx context.Context, text string, template *types.AnalyzeTemplate) (*types.AnalyzeResponse, error)
 	AnonymizeItem(ctx context.Context, analyzeResults []*types.AnalyzeResult, text string,
-		anonymizeTemplate *types.AnonymizeTemplate) (*types.AnonymizeResponse, error)
+		anonymizeTemplate *types.AnonymizeTemplate,anonymizeTextContext *types.AnonymizeTextContext) (*types.AnonymizeResponse, error)
 	AnonymizeImageItem(ctx context.Context, image *types.Image, analyzeResults []*types.AnalyzeResult,
 		anonymizeImageTypeEnum types.DetectionTypeEnum,
 		anonymizeImageTemplate *types.AnonymizeImageTemplate) (*types.AnonymizeImageResponse, error)

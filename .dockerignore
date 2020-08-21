@@ -1,6 +1,6 @@
 # Go
 
-vendor/
+#vendor/
 
 # Git
 .git

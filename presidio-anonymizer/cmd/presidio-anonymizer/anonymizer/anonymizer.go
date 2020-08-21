@@ -13,8 +13,8 @@ import (
 type sortedResults []*types.AnalyzeResult
 
 // transformSingleField
-func transformSingleField(transformation *types.Transformation, result *types.AnalyzeResult, text string) (bool, string, error) {
-	newtext, err := transformField(transformation, result, text)
+func transformSingleField(anonymizeTextContext *types.AnonymizeTextContext, transformation *types.Transformation, result *types.AnalyzeResult, text string) (bool, string, error) {
+	newtext, err := transformField(anonymizeTextContext, transformation, result, text)
 	if err != nil {
 		return false, "", err
 	}
@@ -22,15 +22,15 @@ func transformSingleField(transformation *types.Transformation, result *types.An
 }
 
 // anonymizeSingleResult anonymize a single analyze result
-func anonymizeSingleResult(result *types.AnalyzeResult, transformations []*types.FieldTypeTransformation, text string) (bool, string, error) {
+func anonymizeSingleResult(anonymizeTextContext *types.AnonymizeTextContext, result *types.AnalyzeResult, transformations []*types.FieldTypeTransformation, text string) (bool, string, error) {
 	for _, transformation := range transformations {
 		if transformation.Fields == nil {
-			return transformSingleField(transformation.Transformation, result, text)
+			return transformSingleField(anonymizeTextContext,transformation.Transformation, result, text)
 		}
 
 		for _, fieldType := range transformation.Fields {
 			if fieldType.Name == result.Field.Name {
-				return transformSingleField(transformation.Transformation, result, text)
+				return transformSingleField(anonymizeTextContext,transformation.Transformation, result, text)
 			}
 		}
 	}
@@ -51,8 +51,7 @@ func (a sortedResults) Less(i, j int) bool {
 }
 
 //AnonymizeText ...
-func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.AnonymizeTemplate) (string, error) {
-
+func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.AnonymizeTemplate, anonymizeTextContext *types.AnonymizeTextContext) (string, error) {
 	//Sort results by start location to verify order
 	sort.Sort(sortedResults(results))
 
@@ -73,7 +72,7 @@ func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.
 
 		result := results[i]
 		fmt.Println("result:", result)
-		transformed, transformedText, err := anonymizeSingleResult(result, template.FieldTypeTransformations, text)
+		transformed, transformedText, err := anonymizeSingleResult(anonymizeTextContext,result, template.FieldTypeTransformations, text)
 		if err != nil {
 			return "", err
 		}
@@ -87,7 +86,7 @@ func AnonymizeText(text string, results []*types.AnalyzeResult, template *types.
 		// transform using the default transformation, as described in the
 		// template, or fallback to default transformation
 		if template.DefaultTransformation != nil {
-			text, err = transformField(template.DefaultTransformation, result, text)
+			text, err = transformField(anonymizeTextContext,template.DefaultTransformation, result, text)
 		} else {
 			text, err = methods.ReplaceValue(text, *result.Location, "<"+strings.ToUpper(result.Field.Name)+">")
 		}
@@ -131,7 +130,7 @@ func removeDuplicatesBaseOnScore(results []*types.AnalyzeResult) []*types.Analyz
 	return ret_results
 }
 
-func transformField(transformation *types.Transformation, result *types.AnalyzeResult, text string) (string, error) {
+func transformField(anonymizeTextContext *types.AnonymizeTextContext, transformation *types.Transformation, result *types.AnalyzeResult, text string) (string, error) {
 
 	if transformation.ReplaceValue != nil {
 		result, err := methods.ReplaceValue(text, *result.Location, transformation.ReplaceValue.NewValue)
@@ -161,7 +160,7 @@ func transformField(transformation *types.Transformation, result *types.AnalyzeR
 	}
 
 	if transformation.ShiftDateToDaysSinceMomentZeroValue != nil {
-		result, err := methods.ShiftDateToDaysSinceMomentZeroValue(text, *result.Location, transformation.ShiftDateToDaysSinceMomentZeroValue.DateOfMomentZero, transformation.ShiftDateToDaysSinceMomentZeroValue.DateLayout)
+		result, err := methods.ShiftDateToDaysSinceMomentZeroValue(text, *result.Location, transformation.ShiftDateToDaysSinceMomentZeroValue.DateOfMomentZero, transformation.ShiftDateToDaysSinceMomentZeroValue.DateLayout,anonymizeTextContext)
 		return result, err
 	}
 	return "", fmt.Errorf("Transformation not found")

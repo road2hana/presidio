@@ -20,7 +20,7 @@ var testDatePlans = []struct {
 	{
 		desc:     "Shifting date time fields",
 		text:     "My name is David and I live in Miami. I traveled on 12/03/2018 to the beach, and returned on April 20. I need to go to school on 13th of June, and back to home on 11.11",
-		expected: "My name is <PERSON> and I live in <LOCATION>. I traveled on <DaysSM>315</DaysSM> to the beach, and returned on <DaysSM>-106751</DaysSM>. I need to go to school on <DaysSM>-106751</DaysSM>, and back to home on <DaysSM>-106751</DaysSM>",
+		expected: "My name is <PERSON> and I live in <LOCATION>. I traveled on <DaysSM>315</DaysSM> to the beach, and returned on <DaysSM>354</DaysSM>. I need to go to school on <DaysSM>408</DaysSM>, and back to home on <DaysSM>559</DaysSM>",
 		analyzeResults: []*types.AnalyzeResult{{
 			Location: &types.Location{
 				Start: 52,
@@ -127,7 +127,7 @@ var testDatePlans = []struct {
 	{
 		desc:     "Bought 29 June. Call 3 time Lazada",
 		text:     "Bought 29 June. Call 3 time Lazada",
-		expected: "Bought <DaysSM>-106751</DaysSM>. Call 3 time Lazada",
+		expected: "Bought <DaysSM>424</DaysSM>. Call 3 time Lazada",
 		analyzeResults: []*types.AnalyzeResult{{
 			Location: &types.Location{
 				Start: 7,
@@ -191,13 +191,13 @@ var testDatePlans = []struct {
 	},
 	// test 11 july
 	{
-		desc:     "For your information I placed the order on 13/7/2017. My parcel should be arrived on 19/7/2017 but parcel failed to deliver. I was informed by lazada that the items will be refund without \the logic reason. But why until today 7/8/2017 lazada haven’t received any refund yet??? Please call me asap or email the explanation",
-		text:     "For your information I placed the order on 13/7/2017. My parcel should be arrived on 19/7/2017 but parcel failed to deliver. I was informed by lazada that the items will be refund without the logic reason. But why until today 7/8/2017 lazada haven’t received any refund yet??? Please call me asap or email the explanation",
-		expected: "For your information I placed the order on <DaysSM>73</DaysSM>. My parcel should be arrived on <DaysSM>79</DaysSM> but parcel failed to deliver. I was informed by lazada that the items will be refund without the logic reason. But why until today <DaysSM>98</DaysSM> lazada haven’t received any refund yet??? Please call me asap or email the explanation",
+		desc:     "For your information I placed the order on 13/11. My parcel should be arrived on 19/7/2017 but parcel failed to deliver. I was informed by lazada that the items will be refund without \the logic reason. But why until today 7/8/2017 lazada haven’t received any refund yet??? Please call me asap or email the explanation",
+		text:     "For your information I placed the order on 13/11. My parcel should be arrived on 19/7/2017 but parcel failed to deliver. I was informed by lazada that the items will be refund without the logic reason. But why until today 7/8/2017 lazada haven’t received any refund yet??? Please call me asap or email the explanation",
+		expected: "For your information I placed the order on <DaysSM>561</DaysSM>. My parcel should be arrived on <DaysSM>79</DaysSM> but parcel failed to deliver. I was informed by lazada that the items will be refund without the logic reason. But why until today <DaysSM>98</DaysSM> lazada haven’t received any refund yet??? Please call me asap or email the explanation",
 		analyzeResults: []*types.AnalyzeResult{{
 			Location: &types.Location{
 				Start: 43,
-				End:   52,
+				End:   48,
 			},
 			Field: &types.FieldTypes{
 				Name: "DATE",
@@ -205,8 +205,8 @@ var testDatePlans = []struct {
 		},
 		{
 			Location: &types.Location{
-				Start: 85,
-				End:   94,
+				Start: 81,
+				End:   90,
 			},
 			Field: &types.FieldTypes{
 				Name: "DATE",
@@ -214,8 +214,8 @@ var testDatePlans = []struct {
 		},
 		{
 			Location: &types.Location{
-				Start: 226,
-				End:   234,
+				Start: 222,
+				End:   230,
 			},
 			Field: &types.FieldTypes{
 				Name: "DATE",
@@ -242,7 +242,10 @@ func TestDatePlan(t *testing.T) {
 			FieldTypeTransformations: plan.fieldTypeTransformation,
 			DefaultTransformation:    plan.defaultTransformation,
 		}
-		output, err := AnonymizeText(plan.text, plan.analyzeResults, &anonymizerTemplate)
+		anonymizeTextContext := types.AnonymizeTextContext{
+			CreateDate: "20/1/2018",
+		}
+		output, err := AnonymizeText(plan.text, plan.analyzeResults, &anonymizerTemplate, &anonymizeTextContext)
 		assert.NoError(t, err)
 		assert.Equal(t, plan.expected, output)
 	}
