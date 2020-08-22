@@ -18,7 +18,7 @@ var testDatePlans = []struct {
 }{
 	// Replace  date time fields with a shifting transformation which was declared for ALL fields
 	{
-		desc:     "Shifting date time fields",
+		desc:     "My name is David and I live in Miami. I traveled on 12/03/2018 to the beach, and returned on April 20. I need to go to school on 13th of June, and back to home on 11.11",
 		text:     "My name is David and I live in Miami. I traveled on 12/03/2018 to the beach, and returned on April 20. I need to go to school on 13th of June, and back to home on 11.11",
 		expected: "My name is <PERSON> and I live in <LOCATION>. I traveled on <DaysSM>315</DaysSM> to the beach, and returned on <DaysSM>354</DaysSM>. I need to go to school on <DaysSM>408</DaysSM>, and back to home on <DaysSM>559</DaysSM>",
 		analyzeResults: []*types.AnalyzeResult{{
