@@ -13,6 +13,7 @@ import (
 
 var datePatterns map[string]string
 var sepSymbols = [4]string {"-"," ","/","."}
+var dateEndSymbols =[3]string{" ",".","!"}
 
 //ShiftDate ...
 func ShiftDateValue(text string, location types.Location, daysSinceMomentZero int32) (string, error) {
@@ -48,10 +49,17 @@ func ShiftDateToDaysSinceMomentZeroValue(text string, location types.Location, d
 	}
 	// get Date value string
 	dateValue := text[location.Start:pos]
+	// Trim the suffix of date value, so that the date value could match the date layout predfined
+	dateValue, err := trimDateValueSuffix(dateValue)
 
 	shiftedDateValue, err := shiftDateToDays(dateValue,dateOfMomentZero, dateLayout, anonymizeTextContext)
 	var textWithDateShifted string
-	replacedDateValue := "<DaysSM>" + strconv.FormatInt(shiftedDateValue,10) + "</DaysSM>"
+	var replacedDateValue string
+	if shiftedDateValue >0 {
+		replacedDateValue = "<DaysSM>" + strconv.FormatInt(shiftedDateValue,10) + "</DaysSM>"
+	}else{
+		replacedDateValue = "<DaysSM>Invalid</DaysSM>" 
+	}
 	if err == nil {
 		textWithDateShifted = replaceValueInString(text, replacedDateValue,int(location.Start),int(pos))
 	}else{
@@ -71,8 +79,10 @@ func init(){
 	//	datePatterns["^(0?[1-9]|1[012])([-/.]| +)(0?[1-9]|[12][0-9]|3[01])([-/.]| +)(19|20)\\d\\d$"] = "1-2-2006"	
 	datePatterns["^(0?[1-9]|[12][0-9]|3[01])([-/.]| +)(0?[1-9]|1[012])([-/.]| +)(19|20)\\d\\d$"] ="2-1-2006"
 	datePatterns["^(?i)((31(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0?[1-9]|([12]\\d)|30)((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0?[1-9]|1\\d|2[0-8]|(29))Feb))(19|20)\\d\\d$"] = "2Jan2006"
+	datePatterns["^(?i)(((31th([-/.]| +)(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0?[1-9]|([12]\\d)|30)th([-/.]| +)((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0?[1-9]|1\\d|2[0-8]|(29))Feb))([-/.]| +)(19|20)\\d\\d)$"] = "2th-Jan-2006"
 	datePatterns["^(?i)((31(January|March|May|July|August|October|Dec))|(0?[1-9]|([12]\\d)|30)((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0?[1-9]|1\\d|2[0-8]|(29))February))(19|20)\\d\\d$"] = "2January2006"
-	datePatterns["^(?i)(?:((((Jan|Mar|May|Jul|Aug|Oct|Dec)([-/.]| +)31)|((Jan(uary)?|Mar|May)|Apr|Jun|July)|Aug|Oct|(Sep|Nov|Dec))([-/.]| +)(0?[1-9]|([12]\\d)|30))|(Feb([-/.]| +)(0?[1-9]|1\\d|2[0-8]|(29(([-/.]| +)((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))))([-/.]| +)((1[6-9]|[2-9]\\d)\\d{2})$"] = "Jan-02-2006"
+	datePatterns["^(?i)(?:((Jan|Mar|May|Jul|Aug|Oct|Dec)([-/.]| +))(31)|(Jan(uary)?|Mar|May|Apr|Jun|Jul|Aug|Oct|Sep|Nov|Dec)([-/.]| +)(0?[1-9]|([12]\\d)|30)|(Feb([-/.]| +)(0?[1-9]|1\\d|2[0-8]|(29(([-/.]| +)((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))))([-/.]| +)((1[6-9]|[2-9]\\d)\\d{2})$"] = "Jan-02-2006"
+	datePatterns["(?i)(?:(31([-/.]| +)(January|March|May|July|August|October|December))|((0?[1-9]|([12]\\d)|30)([-/.]| +)(January|March|May|April|June|July|August|October|(Sept|Nov|Dec)(ember)))|((0?[1-9]|1\\d|2[0-8]|(29(([-/.]| +)((1[6-9]|[2-9]\\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00)))))([-/.]| +)February))([-/.]| +)((1[6-9]|[2-9]\\d)\\d{2})$"] = "2-January-2006"
 
 
 	// Month and Year
@@ -85,11 +95,13 @@ func init(){
 	datePatterns["^(?i)(((Jan|Mar|May|Jul|Aug|Oct|Dec)([-/.]| +)31)|((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)([-/.]| +)(0[1-9]|([12]\\d)|30)|(Feb([-/.]| +)(0[1-9]|1\\d|2[0-8]|(29))))$"] = "Jan-2"
 
 	datePatterns["^(?i)((31th +of +(January|March|May|July|August|October|December))|(0[1-9]|([12]\\d)|30)th +of +((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0[1-9]|1\\d|2[0-8]|(29))th +of +February))$"] = "2th of January"
+	datePatterns["^(?i)((31th +(January|March|May|July|August|October|December))|(0[1-9]|([12]\\d)|30)th +((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0[1-9]|1\\d|2[0-8]|(29))th +February))$"] = "2th January"
 	datePatterns["^(?i)((31th +of +(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0?[1-9]|([12]\\d)|30)th +of +((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0?[1-9]|1\\d|2[0-8]|(29))th +of +Feb))$"] = "2th of Jan"
 	datePatterns["^(?i)((31([-/.]| +)(January|March|May|July|August|October|December))|(0?[1-9]|([12]\\d)|30)([-/.]| +)((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0?[1-9]|1\\d|2[0-8]|(29))([-/.]| +)February))$"] = "2 January"
+
 	datePatterns["^(?i)((31([-/.]| +)(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0?[1-9]|([12]\\d)|30)([-/.]| +)((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0?[1-9]|1\\d|2[0-8]|(29))([-/.]| +)Feb))$"] = "2 Jan"
 	datePatterns["^(0?[1-9]|[12][0-9]|3[01])([-/.]| +)(11|12|9)$"] = "2.1"
-	//datePatterns["((31([-/.]| +)(10|12|1|3|5|7|8))|(0?[1-9]|([12]\\d)|30)([-/.]| +)((10|11|12)|(1|3|5|4|7|6)|8|9)|((0?[1-9]|1\\d|2[0-8]|(29))([-/.]| +)2))\\b"] = "2.1"
+	datePatterns["^(?:)(31([-/.]| +)(10|12|1|3|5|7|8))|(0?[1-9]|([12]\\d)|30)([-/.]| +)((10|11|12)|(1|3|5|4|7|6)|8|9)|((0?[1-9]|1\\d|2[0-8]|(29))([-/.]| +)2)$"] = "2.1"
 
 
 }
@@ -143,7 +155,7 @@ func parseDateLayout( dateValue string) (string, error){
 		var dateValidtor = regexp.MustCompile(dateReg)
 		var matched = dateValidtor.MatchString(dateValue)
 
-		fmt.Println("dateReg",dateReg, "dateLayout",dateLayout, "dateValue", dateValue, "matched:", matched)
+		fmt.Println("dateReg",dateReg, "dateLayout",dateLayout, "dateValue", dateValue,"length",len(dateValue), "matched:", matched)
 		if matched {
 			datePatternMatched = dateReg
 			break
@@ -176,4 +188,13 @@ func parseDateSeprator(dateLayout string, dateValue string)(string,string){
 		}
 	}
 	return defaultSep, newSep
+}
+
+func trimDateValueSuffix(dateValue string)(string, error){
+	var newDateValue string
+	newDateValue = dateValue
+	for _, sepSymbol := range dateEndSymbols {
+		newDateValue = strings.TrimSuffix(newDateValue, sepSymbol)
+	}
+	return newDateValue, nil
 }

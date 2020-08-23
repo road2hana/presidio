@@ -117,6 +117,7 @@ func removeDuplicatesBaseOnScore(results []*types.AnalyzeResult) []*types.Analyz
 		if ret_results[current_index].Location.End > results[i].Location.Start && ret_results[current_index].Location.End < results[i].Location.End {
 			//extend the Location
 			ret_results[current_index].Location.End = results[i].Location.End
+			ret_results[current_index].Location.Length = ret_results[current_index].Location.End - ret_results[current_index].Location.Start
 			continue
 		}
 		// deal with duplicate recognizer by using the recognizer with higher score

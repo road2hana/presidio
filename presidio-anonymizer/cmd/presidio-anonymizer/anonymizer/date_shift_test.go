@@ -96,7 +96,7 @@ var testDatePlans = []struct {
 		        }},
 			Transformation: &types.Transformation{
 				ShiftDateToDaysSinceMomentZeroValue: &types.ShiftDateToDaysSinceMomentZeroValue{
-					DateOfMomentZero: "1/5/2017",
+					DateOfMomentZero: "1/5/2014",
 					DateLayout: "2/1/2006",
 				},
 			},
@@ -160,7 +160,7 @@ var testDatePlans = []struct {
 	{
 		desc:     "2 years duration (10June2015)  I didn''t use it until today (15Oct2016). ",
 		text:     "2 years duration (10June2015)  I didn''t use it until today (15Oct2016). ",
-		expected: "2 years duration (<DaysSM>-691</DaysSM>)  I didn''t use it until today (<DaysSM>-198</DaysSM>). ",
+		expected: "2 years duration (<DaysSM>405</DaysSM>)  I didn''t use it until today (<DaysSM>898</DaysSM>). ",
 		analyzeResults: []*types.AnalyzeResult{{
 			Location: &types.Location{
 				Start: 18,
@@ -183,7 +183,7 @@ var testDatePlans = []struct {
 		fieldTypeTransformation: []*types.FieldTypeTransformation{{
 			Transformation: &types.Transformation{
 				ShiftDateToDaysSinceMomentZeroValue: &types.ShiftDateToDaysSinceMomentZeroValue{
-					DateOfMomentZero: "1/5/2017",
+					DateOfMomentZero: "1/5/2014",
 					DateLayout: "2/1/2006",
 				},
 			},
@@ -243,7 +243,7 @@ func TestDatePlan(t *testing.T) {
 			DefaultTransformation:    plan.defaultTransformation,
 		}
 		anonymizeTextContext := types.AnonymizeTextContext{
-			CreateDate: "20/1/2018",
+			CreateDate: "Mar-31-2019",
 		}
 		output, err := AnonymizeText(plan.text, plan.analyzeResults, &anonymizerTemplate, &anonymizeTextContext)
 		assert.NoError(t, err)
