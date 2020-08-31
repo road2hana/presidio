@@ -13,7 +13,7 @@ import (
 
 var datePatterns map[string]string
 var sepSymbols = [4]string {"-"," ","/","."}
-var dateEndSymbols =[3]string{" ",".","!"}
+var dateEndSymbols =[]string{" ",".","!",")"}
 
 //ShiftDate ...
 func ShiftDateValue(text string, location types.Location, daysSinceMomentZero int32) (string, error) {
@@ -48,16 +48,18 @@ func ShiftDateToDaysSinceMomentZeroValue(text string, location types.Location, d
 		return "", fmt.Errorf("Indexes for values: are out of bounds")
 	}
         // get Date value string
-	dateValue := text[location.Start:pos]
+	textRune := []rune(text)
+	dateValueRune := textRune[location.Start:pos]
+	dateValue := string(dateValueRune)
 
 	// skipe none-date(dateLayout is 2.1 which sometime is not a valid date value) determined by the context of the date value
 	sufix_trimed_date_value, err := trimDateValueSuffix(dateValue) 
 	_, default_date_layout, err := parseDateLayout(sufix_trimed_date_value)
 	fmt.Println("default_date_layout:", default_date_layout)
-	if default_date_layout == "2.1" {
-		pre_text := text[:location.Start]
+	if default_date_layout == "2.1" || default_date_layout == "2-1-06" {
+		pre_text := string(textRune[:location.Start])
 		after_text := ""
-		after_text = text[location.End:]
+		after_text = string(textRune[location.End:])
 		after_none_date_pattern := "^(?i)( +)?((year|years|yrs)|(day|days)|(hour|hours|hrs)|(minutes|min)|(liter|glasses|liters|capacity)|(pax))"
 		none_date_matched, _ := regexp.MatchString(after_none_date_pattern, after_text)
 		fmt.Println("pre_text: ", pre_text)
@@ -111,18 +113,24 @@ func init(){
 
 	
 	// Day Month
-	datePatterns["^(?i)(((January|March|May|July|August|October|December)([-/.]| +)31)|((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))([-/.]| +)(0[1-9]|([12]\\d)|30)|(February([-/.]| +)(0[1-9]|1\\d|2[0-8]|(29))))$"] = "January-2"
+	datePatterns["^(?i)(((January|March|May|July|August|October|December)([-/.]| +)31)|((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))([-/.]| +)(0?[1-9]|([12]\\d)|30)|(February([-/.]| +)(0?[1-9]|1\\d|2[0-8]|(29))))$"] = "January-2"
 	datePatterns["^(?i)(((Jan|Mar|May|Jul|Aug|Oct|Dec)([-/.]| +)31)|((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)([-/.]| +)(0?[1-9]|([12]\\d)|30)|(Feb([-/.]| +)(0?[1-9]|1\\d|2[0-8]|(29))))\\b$"] = "Jan-2"
 
-	datePatterns["^(?i)((31th +of +(January|March|May|July|August|October|December))|(0[1-9]|([12]\\d)|30)th +of +((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0[1-9]|1\\d|2[0-8]|(29))th +of +February))$"] = "2th of January"
-	datePatterns["^(?i)((31th +(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0[1-9]|([12]\\d)|30)th +((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0[1-9]|1\\d|2[0-8]|(29))th +Feb))$"] = "2th Jan"
-	datePatterns["^(?i)((31th +(January|March|May|July|August|October|December))|(0[1-9]|([12]\\d)|30)th +((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0[1-9]|1\\d|2[0-8]|(29))th +February))$"] = "2th January"
+	datePatterns["^(?i)((31th +of +(January|March|May|July|August|October|December))|(0?[1-9]|([12]\\d)|30)th +of +((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0?[1-9]|1\\d|2[0-8]|(29))th +of +February))$"] = "2th of January"
+	datePatterns["^(?i)((31st +(January|March|May|July|August|October|December))|(0?[1-9]|([12]\\d)|30)st +((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0?[1-9]|1\\d|2[0-8]|(29))st +February))$"] = "2st January"
+	datePatterns["^(?i)((31th +(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0?[1-9]|([12]\\d)|30)th +((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0?[1-9]|1\\d|2[0-8]|(29))th +Feb))$"] = "2th Jan"
+	datePatterns["^(?i)((31th +(January|March|May|July|August|October|December))|(0?[1-9]|([12]\\d)|30)th +((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0?[1-9]|1\\d|2[0-8]|(29))th +February))$"] = "2th January"
 	datePatterns["^(?i)((31th +of +(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0?[1-9]|([12]\\d)|30)th +of +((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0?[1-9]|1\\d|2[0-8]|(29))th +of +Feb))$"] = "2th of Jan"
+	 datePatterns["^(?i)((31 +of +(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0?[1-9]|([12]\\d)|30) +of +((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0?[1-9]|1\\d|2[0-8]|(29)) +of +Feb))$"] = "2 of Jan"
+	datePatterns["^(?i)((31st +(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0?[1-9]|([12]\\d)|30)st +((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0?[1-9]|1\\d|2[0-8]|(29))st +of +Feb))$"] = "2st Jan"
 	datePatterns["^(?i)((31([-/.]| +)(January|March|May|July|August|October|December))|(0?[1-9]|([12]\\d)|30)([-/.]| +)((January|March|May|April|July|June)|August|October|(Sept|Nov|Dec)(ember))|((0?[1-9]|1\\d|2[0-8]|(29))([-/.]| +)February))$"] = "2 January"
 
 	datePatterns["^(?i)((31([-/.]| +)(Jan|Mar|May|Jul|Aug|Oct|Dec))|(0?[1-9]|([12]\\d)|30)([-/.]| +)((Jan|Mar|May|Apr|Jul|Jun)|Aug|Oct|Sep|Nov|Dec)|((0?[1-9]|1\\d|2[0-8]|(29))([-/.]| +)Feb))$"] = "2 Jan"
 	datePatterns["^(0?[1-9]|[12][0-9]|3[01])([-/.]| +)(11|12|9)$"] = "2.1"
-	datePatterns["^(?:)((31([-/.]| +)(10|12|1|3|5|7|8))|(0?[1-9]|([12]\\d)|30)([-/.]| +)((10|11|12)|(1|3|5|4|7|6)|8|9)|((0?[1-9]|1\\d|2[0-8]|(29))([-/.]| +)2))$"] = "2.1"
+	datePatterns["^(?:)((31([-/.]| +)(10|12|1|3|5|7|8))|(0?[1-9]|([12]\\d)|30)([-/.]| +)((10|11|12)|0?(1|3|5|4|7|6)|8|9)|((0?[1-9]|1\\d|2[0-8]|(29))([-/.)]| +)2))$"] = "2.1"
+
+	// Month
+	datePatterns["^(?i)((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))$"] = "Jan"
 
 
 }

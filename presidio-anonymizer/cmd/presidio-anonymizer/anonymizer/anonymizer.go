@@ -115,9 +115,13 @@ func removeDuplicatesBaseOnScore(results []*types.AnalyzeResult) []*types.Analyz
 		}
 		// deal with overlaped locations, our strategy is to combinb them together
 		if ret_results[current_index].Location.End > results[i].Location.Start && ret_results[current_index].Location.End < results[i].Location.End {
-			//extend the Location
-			ret_results[current_index].Location.End = results[i].Location.End
-			ret_results[current_index].Location.Length = ret_results[current_index].Location.End - ret_results[current_index].Location.Start
+			//extend the Location for the same field name
+			if ret_results[current_index].Field.Name == results[i].Field.Name {
+				ret_results[current_index].Location.End = results[i].Location.End
+				ret_results[current_index].Location.Length = ret_results[current_index].Location.End - ret_results[current_index].Location.Start
+			}else{
+				ret_results = append(ret_results, results[i])
+			}
 			continue
 		}
 		// deal with duplicate recognizer by using the recognizer with higher score
